@@ -7,8 +7,9 @@
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE); 
 
 RF24 radio(8, 7); // CE, CSN
-
+long lastReceivedTimestamp = 0;
 const byte address[6] = "00001";
+
 void setup() {
   Serial.begin(9600);
   radio.begin();
@@ -16,9 +17,9 @@ void setup() {
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();
 
-  lcd.begin(16,2);//Defining 16 columns and 2 rows of lcd display
-  lcd.backlight();//To Power ON the back light
-
+  lcd.begin(16,2);
+  lcd.backlight();
+  lcd.print("Waiting...");
 }
 void loop() {
   lcd.setCursor(0,0);
@@ -37,12 +38,15 @@ void loop() {
     lcd.print("Temp: " + temperature + (char)223 + "C");
     lcd.setCursor(0, 1);
     lcd.print("RH: " + humidity + "%");
-  
     
-    // Serial.println(text);
-    // lcd.print(text);
+    lastReceivedTimestamp = millis();
   } else {
-    // lcd.print(" Radio not available ");
+    long difference = millis() - lastReceivedTimestamp;
+    if (difference > 600000) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Sensor not responding");
+    }
   }
 }
 
