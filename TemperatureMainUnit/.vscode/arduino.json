@@ -1,5 +1,5 @@
 {
-    "board": "arduino:avr:nano",
-    "configuration": "cpu=atmega328old",
-    "sketch": "TemperatureMainUnit.ino"
+    "board": "arduino:avr:uno",
+    "sketch": "TemperatureMainUnit.ino",
+    "port": "/dev/cu.usbmodem144201"
 }

@@ -9,6 +9,7 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 RF24 radio(8, 7); // CE, CSN
 long lastReceivedTimestamp = 0;
 const byte address[6] = "00001";
+bool notRespondingShowing = false;
 
 void setup() {
   Serial.begin(9600);
@@ -40,12 +41,18 @@ void loop() {
     lcd.print("RH: " + humidity + "%");
     
     lastReceivedTimestamp = millis();
+    notRespondingShowing = false;
   } else {
     long difference = millis() - lastReceivedTimestamp;
     if (difference > 600000) {
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Sensor not responding");
+      if (!notRespondingShowing) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Sensor not");
+        lcd.setCursor(0, 1);
+        lcd.print("responding");
+        notRespondingShowing = true;
+      }
     }
   }
 }

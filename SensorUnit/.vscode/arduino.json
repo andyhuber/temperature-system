@@ -1,4 +1,6 @@
 {
-    "board": "arduino:avr:uno",
-    "sketch": "SensorUnit.ino"
+    "board": "arduino:avr:nano",
+    "sketch": "SensorUnit.ino",
+    "configuration": "cpu=atmega328old",
+    "port": "/dev/cu.usbserial-14610"
 }
