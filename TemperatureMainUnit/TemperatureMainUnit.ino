@@ -22,23 +22,60 @@ void setup() {
   lcd.backlight();
   lcd.print("Waiting...");
 }
+
 void loop() {
-  lcd.setCursor(0,0);
+  
+  if (Serial.available() > 0) {
+    lcd.setCursor(0,0);
+    String incomingTime = Serial.readString();
+    lcd.clear();
+    lcd.print(incomingTime);
+  }
   
   if (radio.available()) {
+    lcd.setCursor(0,0);
     char text[32] = "";
     radio.read(&text, sizeof(text));
-    Serial.println(text);
-    String message = text;
-    int delimiterIndex = message.indexOf("-");
-    String temperature = message.substring(0,delimiterIndex);
-    String humidity = message.substring(delimiterIndex + 1, message.length());
+    Serial.println(text); // For the server
+
+    char *splitChunkString = strtok(text, ":");
+    char *groups[3] = {};
+    int i = 0;
+    while (splitChunkString != NULL)
+    {
+      groups[i++] = splitChunkString;
+      splitChunkString = strtok (NULL, ":");
+    }
+    
+    char *splitString = strtok(groups[1], "-");
+    char *measurements[3] = {};
+    int j = 0;
+    while (splitString != NULL)
+    {
+      measurements[j++] = splitString;
+      splitString = strtok (NULL, "-");
+    }
 
     lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Temp: " + temperature + (char)223 + "C");
-    lcd.setCursor(0, 1);
-    lcd.print("RH: " + humidity + "%");
+
+    String temperature = measurements[0];
+    if (temperature != "") {
+      lcd.setCursor(0, 0);
+      lcd.print("Out: " + temperature + (char)223 + "C");
+    }
+
+    String humidity = measurements[1];
+    if (humidity != "") {
+      lcd.setCursor(0, 1);
+      lcd.print("RH: " + humidity + "%");
+    }
+    
+    if (groups != "") {
+      String battery = groups[2];
+      battery += "V";
+      lcd.setCursor(11, 1);
+      lcd.print(battery);
+    }
     
     lastReceivedTimestamp = millis();
     notRespondingShowing = false;

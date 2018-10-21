@@ -1,6 +1,5 @@
 {
-    "board": "arduino:avr:nano",
+    "board": "adafruit:avr:feather32u4",
     "sketch": "SensorUnit.ino",
-    "configuration": "cpu=atmega328old",
-    "port": "/dev/cu.usbserial-14610"
+    "port": "/dev/cu.usbmodem146101"
 }
